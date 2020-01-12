@@ -23,113 +23,109 @@ document.addEventListener("DOMContentLoaded", ()=>{
  
   // / MY CODE STARTS HERE =================================================================================
 // ==================================================================================
-
-function destroy(baseURI,id){
-  let configObj = {
-    method: "DELETE"
-  } 
-  return fetch(`${baseURI}/${id}`,configObj).then().catch(error=>console.log(error.message))
+///HELPER APIS
+function get(URI){
+  return fetch(URI).then(response=>response.json()).catch(error=>showError(error))
 }
 
-function post(baseURI,bodyObject){
-  return fetch(baseURI,{
+function destroy(URI, id){
+  console.log(id)
+  let configObj = {
+    method: "DELETE"
+  }
+  return fetch(`${URI}${id}`, configObj).then(response=>response.json()).catch(error=>showError(error))
+}
+
+function post(URI,newToyObj){
+  let configObj = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json"
-      },
-    body: JSON.stringify(bodyObject)
-  }).then(response=>response.json()).catch(error=>console.log(error.message))
+    },
+    body: JSON.stringify(newToyObj)
+  };
+  return fetch(URI,configObj).then(response=>response.json()).catch(error=>showError(error))
 }
 
-function patch(baseURI,id,bodyObject){
-  // debugger
-  return fetch(`${baseURI}/${id}`,{
+function patch(url, id, bodyObject) {
+  return fetch(`${url}${id}`, {
     method: "PATCH",
     headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-      },
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+    },
     body: JSON.stringify(bodyObject)
-  }).then(response=>response.json()).catch(error=>console.log(error.message))
+  }).then(resp => resp.json())
 }
 
-const baseURI = "http://localhost:3000/toys"
+//CONSTANTS
+const toyAddButton = document.querySelector(".add-toy-form")
+const URI = "http://localhost:3000/toys/"
 const toyCollection = document.querySelector("#toy-collection")
-const addToyForm = document.querySelector(".add-toy-form")
 
-// =Create new toy
-addToyForm.addEventListener("submit",function(e){
-  postToyThenRenderToy(e)
-})
+//FUNCTIONS
+function showError(error){
+  console.log(error.message)
+}
 
-function postToyThenRenderToy(event){
-  event.preventDefault()
-  let bodyObject = {
+function fetchToysAndPutThemInThePage(URI){
+  get(URI).then(toys=>toys.forEach(addCardToPage))
+}
+
+function deleteToyAndRemoveFromPage(id,elementToRemove){
+  destroy(URI,id).then(response=>elementToRemove.remove())
+}
+
+function addNewToyAndRenderTheCard(event){
+  let newToyObj = {
     name: event.target.name.value,
     image: event.target.image.value,
     likes: 0
-  }
-  post(baseURI,bodyObject).then(toy=>{
-    addAToyToPage(toy);
-    addToyForm.reset();
-  })
+  };
+  post(URI,newToyObj).then(toy=>function(toy){
+    addCardToPage(toy)
+  });
 }
 
-// index page. render all toys
-function fetchToys(baseURI){
-  console.log("inside fetchToys")
-  return fetch(baseURI).then(response => response.json()).then(json => renderToys(json)).catch(error => function(error){
-    console.log(error.message)
-  })
-}
-
-function renderToys(json){
-  console.log("inside renderToys")
-  json.forEach(addAToyToPage);
-}
-
-function addAToyToPage(toy){
-  console.log("inside addAToyToPage")
-  let newDiv = document.createElement('div')
-  newDiv.classList.add('card')
-  newDiv.id = toy.id
-  let newH2 = document.createElement('h2')
-  newH2.innerText = toy.name
-  let newImg = document.createElement('img')
-  newImg.src = toy.image
-  newImg.classList.add('toy-avatar')
-  let newP = document.createElement('p')
-  newP.innerText = `${toy.likes} Likes`
-  newP.id = toy.id
-  let newLikeButton = document.createElement('button')
-  newLikeButton.classList.add('like-btn')
-  newLikeButton.innerText = "Like <3"
-  newLikeButton.addEventListener("click",()=>patchLikesThenUpdateToy(toy.id,newP))
-  let newDeleteButton = document.createElement('button')
-  newDeleteButton.classList.add('delete-btn')
-  newDeleteButton.innerText = 'Delete'
-  newDeleteButton.addEventListener("click",()=>deleteToyFromServerAndThenFromClient(toy.id,newDiv))
-  newDiv.append(newH2,newImg,newP,newLikeButton,newDeleteButton)
-  toyCollection.appendChild(newDiv)
-}
-
-function patchLikesThenUpdateToy(id,newP){
+function updateLikeandRenderPage(id, likesElement) {
   let bodyObject = {
-    likes: parseInt(newP.innerText) + 1
+    likes: parseInt(likesElement.innerText) + 1
   }
-  patch(baseURI, id, bodyObject).then(toy => {
-    newP.innerText = `${toy.likes} Likes patched`
+  patch(URI, id, bodyObject).then(toy => {
+    likesElement.innerText = `${toy.likes} LikesZZZ`
   })
 }
 
-function deleteToyFromServerAndThenFromClient(id,newDiv){
-  destroy(baseURI,id).then(response => newDiv.remove())
+function addCardToPage(toy){
+let newDiv = document.createElement('div')
+newDiv.classList.add('card')
+let newh2 = document.createElement('h2')
+newh2.innerText = toy.name
+let newImg = document.createElement('img')
+newImg.classList.add('toy-avatar')
+newImg.src = toy.image
+let newP = document.createElement('p')
+newP.innerText = `${toy.likes} Likes`
+let newLikeButton = document.createElement('button')
+newLikeButton.innerText = "Like <3"
+newLikeButton.classList.add('like-btn')
+newLikeButton.addEventListener("click",function(event){
+  console.log("Likes clicked")
+  updateLikeandRenderPage(toy.id,newP)
+})
+let newDeleteButton = document.createElement('button')
+newDeleteButton.innerText = "Delete"
+newDeleteButton.addEventListener("click",()=>deleteToyAndRemoveFromPage(toy.id,newDiv))
+newDiv.append(newh2,newImg,newP,newLikeButton,newDeleteButton)
+toyCollection.appendChild(newDiv)
 }
 
-// MAIN STARTS HERE======
-
-fetchToys(baseURI)
+//EVENETLISTENERS / LOADINGFUNCTIONS
+fetchToysAndPutThemInThePage(URI)
+toyAddButton.addEventListener("submit",function(event){
+  addNewToyAndRenderTheCard(event)
+});
 
   // MY CODE FINISHES HERE==================================================================================
 // ==================================================================================
