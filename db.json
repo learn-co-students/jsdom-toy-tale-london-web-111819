@@ -4,19 +4,13 @@
       "id": 1,
       "name": "Woody",
       "image": "http://www.pngmart.com/files/3/Toy-Story-Woody-PNG-Photos.png",
-      "likes": 9
+      "likes": 23
     },
     {
       "id": 2,
       "name": "Buzz Lightyear",
       "image": "http://www.pngmart.com/files/6/Buzz-Lightyear-PNG-Transparent-Picture.png",
-      "likes": 18
-    },
-    {
-      "id": 3,
-      "name": "Mr. Potato Head",
-      "image": "https://vignette.wikia.nocookie.net/universe-of-smash-bros-lawl/images/d/d8/Mr-potato-head-toy-story.gif/revision/latest?cb=20151129131217",
-      "likes": 4
+      "likes": 26
     },
     {
       "id": 4,
@@ -92,6 +86,33 @@
       "image": "https://cdn.pixabay.com/photo/2015/02/24/15/41/dog-647528_960_720.jpg",
       "likes": 0,
       "id": 16
+    },
+    {
+      "name": "Jim",
+      "image": "https://cdn.pixabay.com/photo/2015/02/24/15/41/dog-647528_960_720.jpg",
+      "likes": 2,
+      "id": 17
+    },
+    {
+      "name": "Emily",
+      "image": "https://pixabay.com/illustrations/dog-wolf-yelp-moon-tree-night-647528/",
+      "id": 18
+    },
+    {
+      "name": "Emily",
+      "image": "https://pixabay.com/illustrations/dog-wolf-yelp-moon-tree-night-647528/",
+      "id": 19
+    },
+    {
+      "name": "Forky",
+      "image": "https://pixabay.com/illustrations/dog-wolf-yelp-moon-tree-night-647528/",
+      "likes": 0,
+      "id": 20
+    },
+    {
+      "name": "Emily",
+      "image": "https://pixabay.com/illustrations/dog-wolf-yelp-moon-tree-night-647528/",
+      "id": 21
     }
   ]
 }
